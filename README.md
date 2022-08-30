@@ -66,7 +66,48 @@
              if user:
                  raise ValidationError('That email is taken. Please choose a different one.')
 
+2. 登入和登出
+如果邮箱和密码匹配，则成功登陆
 
+       2.1 __init__.py 
+       from flask_login import LoginManager
+       
+       login_manager = LoginManager(app)
+       
+       
+       2.2 routes.py 增加登陆和登出
+       
+       from flask_login import login_user, current_user, logout_user
+       
+       在register和login里面先加一个：
+        if current_user.is_authenticated:
+        return redirect(url_for('home'))    所以如果登陆成功，直接导回主页
+        
+        if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):  如果邮箱和密码匹配！！
+            login_user(user, remember=form.remember.data)
+            return redirect(url_for('home')) 回到主页
+        else:
+            flash("Login Unsuccessful. Please check email and password", "danger") 不然用红幅说登陆有误
+    
+        已经登陆要改成logout
+        @app.route("/logout")
+            def logout ():
+                logout_user()
+                return redirect(url_for('home'))
+                
+                
+        2.3 layout.html
+        navbar里面也要修改, 登出标志
+
+        <div class="navbar-nav">
+                {% if current_user.is_authenticated %}
+                  <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                  <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
+                  <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
+                {% endif%}
 
 
 
