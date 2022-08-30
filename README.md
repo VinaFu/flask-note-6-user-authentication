@@ -110,4 +110,21 @@
                 {% endif%}
 
 
-
+3. 建立登陆后才能访问的页面
+         
+         3.1 __init__.py 
+         
+         提示条会变成好看的蓝色。 danger是红色
+         login_manager.login_message_category = 'info'
+         
+         3.2 routes.py 
+         里面设置一个账户页，必须要登陆。然后设一个仅登陆可见的页面
+         
+         @app.route("/account")
+         @login_required
+         def account ():
+           return render_template('account.html', title='Account')
+           还有个和next相关的网路
+         http://127.0.0.1:5000/login?next=%2Faccount
+         
+         layout 里面重新设一个account button
